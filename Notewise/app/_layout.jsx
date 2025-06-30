@@ -44,7 +44,7 @@ export default function RootLayout() {
             </View>
           ),
           headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 20, marginTop: 18 }}>
+            <TouchableOpacity style={{ marginRight: 19, marginTop: 18 }}>
               <View
                 style={{
                   width: 38,

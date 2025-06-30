@@ -9,11 +9,16 @@ import {
 } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import YouTubeScreen from "./youtube";
+import WebsiteScreen from "./website";
+import CopiedTextScreen from "./copied-text";
+import * as DocumentPicker from "expo-document-picker";
 
 export default function Index() {
   const [activeTab, setActiveTab] = useState("Recent");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isBackgroundVisible, setIsBackgroundVisible] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState("main"); // "main", "youtube", "website", "copied-text"
   const slideAnim = useRef(new Animated.Value(0)).current;
 
   const tabs = ["Recent", "Shared", "Title", "Downloaded"];
@@ -21,6 +26,7 @@ export default function Index() {
   const openModal = () => {
     setIsModalVisible(true);
     setIsBackgroundVisible(true);
+    setCurrentScreen("main");
     Animated.timing(slideAnim, {
       toValue: 1,
       duration: 300,
@@ -36,7 +42,28 @@ export default function Index() {
     }).start(() => {
       setIsModalVisible(false);
       setIsBackgroundVisible(false);
+      setCurrentScreen("main");
     });
+  };
+
+  const navigateToScreen = (screen) => {
+    setCurrentScreen(screen);
+  };
+
+  const goBackToMain = () => {
+    setCurrentScreen("main");
+  };
+
+  const pickPDF = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: "application/pdf",
+      copyToCacheDirectory: true,
+      multiple: false,
+    });
+    if (result.type === "success") {
+      // You can handle the selected PDF file here (e.g., upload or show file name)
+      alert(`Selected PDF: ${result.name}`);
+    }
   };
 
   const TabButton = ({ title, isActive, onPress }) => (
@@ -251,114 +278,184 @@ export default function Index() {
                 position: "absolute",
                 top: 5,
                 right: 10,
-
+                zIndex: 10,
                 padding: 5,
               }}
             >
               <Text style={{ fontSize: 35, color: "#666" }}>×</Text>
             </TouchableOpacity>
 
-            {/* Header */}
-            <View style={{ alignItems: "center", marginBottom: 30 }}>
+            {/* Main Screen */}
+            <Animated.View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "#fff",
+                padding: 20,
+                paddingTop: 30,
+                paddingBottom: 40,
+                zIndex: currentScreen === "main" ? 2 : 1,
+              }}
+            >
+              {/* Header */}
               <View
                 style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 30,
-                  backgroundColor: "#f1f3ff",
-                  justifyContent: "center",
                   alignItems: "center",
-                  marginBottom: 15,
+                  marginBottom: 30,
+                  paddingTop: 30,
                 }}
               >
-                <Ionicons
-                  name="duplicate-outline"
-                  size={26}
-                  color={"#3f66fb"}
-                />
+                <View
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    backgroundColor: "#f1f3ff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: 15,
+                  }}
+                >
+                  <Ionicons
+                    name="duplicate-outline"
+                    size={26}
+                    color={"#3f66fb"}
+                  />
+                </View>
+                <Text style={{ fontSize: 23, fontWeight: "5", color: "#333" }}>
+                  Add Source
+                </Text>
               </View>
-              <Text style={{ fontSize: 23, fontWeight: "5", color: "#333" }}>
-                Add Source
-              </Text>
-            </View>
 
-            <Text
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "#666",
+                  marginBottom: 20,
+                  textAlign: "center",
+                }}
+              >
+                Sources let Notewise base its responses on the information that
+                matters most to you.
+              </Text>
+
+              {/* Create options */}
+              <TouchableOpacity
+                style={{
+                  padding: 15,
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: 24,
+                  marginBottom: 10,
+                  alignItems: "center",
+                  borderWidth: 1,
+                  borderColor: "blue",
+                }}
+                onPress={pickPDF}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
+                  PDF
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  padding: 15,
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: 24,
+                  marginBottom: 10,
+                  alignItems: "center",
+                  borderWidth: 1,
+                  borderColor: "blue",
+                }}
+                onPress={() => navigateToScreen("website")}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
+                  Website
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  padding: 15,
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: 24,
+                  marginBottom: 10,
+                  alignItems: "center",
+                  borderWidth: 1,
+                  borderColor: "blue",
+                }}
+                onPress={() => navigateToScreen("youtube")}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
+                  YouTube
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  padding: 15,
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: 24,
+                  marginBottom: 10,
+                  alignItems: "center",
+                  borderWidth: 1,
+                  borderColor: "blue",
+                }}
+                onPress={() => navigateToScreen("copied-text")}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
+                  Copied text
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+
+            {/* YouTube Screen */}
+            <Animated.View
               style={{
-                fontSize: 16,
-                color: "#666",
-                marginBottom: 20,
-                textAlign: "center",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "#fff",
+                zIndex: currentScreen === "youtube" ? 2 : 1,
               }}
             >
-              Sources let Notewise base its responses on the information that
-              matters most to you.
-            </Text>
+              <YouTubeScreen onBack={goBackToMain} />
+            </Animated.View>
 
-            {/* Create options */}
-
-            <TouchableOpacity
+            {/* Website Screen */}
+            <Animated.View
               style={{
-                padding: 15,
-                backgroundColor: "#f8f9fa",
-                borderRadius: 24,
-                marginBottom: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor: "blue",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "#fff",
+                zIndex: currentScreen === "website" ? 2 : 1,
               }}
             >
-              <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                PDF
-              </Text>
-            </TouchableOpacity>
+              <WebsiteScreen onBack={goBackToMain} />
+            </Animated.View>
 
-            <TouchableOpacity
+            {/* Copied Text Screen */}
+            <Animated.View
               style={{
-                padding: 15,
-                backgroundColor: "#f8f9fa",
-                borderRadius: 24,
-                marginBottom: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor: "blue",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "#fff",
+                zIndex: currentScreen === "copied-text" ? 2 : 1,
               }}
             >
-              <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                Website
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                padding: 15,
-                backgroundColor: "#f8f9fa",
-                borderRadius: 24,
-                marginBottom: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor: "blue",
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                YouTube
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                padding: 15,
-                backgroundColor: "#f8f9fa",
-                borderRadius: 24,
-                marginBottom: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor: "blue",
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                Copied text
-              </Text>
-            </TouchableOpacity>
+              <CopiedTextScreen onBack={goBackToMain} />
+            </Animated.View>
           </Animated.View>
         </Animated.View>
       </Modal>
