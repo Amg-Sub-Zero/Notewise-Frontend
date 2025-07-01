@@ -2,11 +2,18 @@ import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, View, Text } from "react-native";
 import { StatusBar } from "react-native";
+import React, { useState } from "react";
+import AccountSwitcher from "./AccountSwitcher";
 
 export default function RootLayout() {
   // Mock user data - replace with actual user data later
-  const userName = "Jobless Billionaire";
-  const userInitial = userName.charAt(0).toUpperCase();
+  const [accounts, setAccounts] = useState([
+    { name: "Jobless Billionaire", email: "jobless@example.com" },
+  ]);
+  const [currentAccount, setCurrentAccount] = useState(accounts[0]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const getInitial = (name) => name.charAt(0).toUpperCase();
   const profileColors = [
     "#FF6B6B",
     "#4ECDC4",
@@ -16,8 +23,13 @@ export default function RootLayout() {
     "#DDA0DD",
     "#98D8C8",
   ];
-  const randomColor =
-    profileColors[Math.floor(Math.random() * profileColors.length)];
+  const getColor = (name) => {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return profileColors[Math.abs(hash) % profileColors.length];
+  };
 
   return (
     <>
@@ -44,13 +56,16 @@ export default function RootLayout() {
             </View>
           ),
           headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 19, marginTop: 18 }}>
+            <TouchableOpacity
+              style={{ marginRight: 19, marginTop: 18 }}
+              onPress={() => setModalVisible(true)}
+            >
               <View
                 style={{
                   width: 38,
                   height: 38,
                   borderRadius: 20,
-                  backgroundColor: randomColor,
+                  backgroundColor: getColor(currentAccount.name),
                   justifyContent: "center",
                   alignItems: "center",
                 }}
@@ -62,7 +77,7 @@ export default function RootLayout() {
                     fontWeight: "bold",
                   }}
                 >
-                  {userInitial}
+                  {getInitial(currentAccount.name)}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -76,6 +91,14 @@ export default function RootLayout() {
             alignItems: "center",
           },
         }}
+      />
+      <AccountSwitcher
+        accounts={accounts}
+        setAccounts={setAccounts}
+        currentAccount={currentAccount}
+        setCurrentAccount={setCurrentAccount}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
       />
     </>
   );

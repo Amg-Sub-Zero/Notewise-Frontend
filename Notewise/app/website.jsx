@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function WebsiteScreen({ onBack }) {
+export default function WebsiteScreen({ onBack, onAddSource }) {
   const [url, setUrl] = useState("");
 
   return (
@@ -108,6 +108,17 @@ export default function WebsiteScreen({ onBack }) {
             marginTop: 148,
             alignSelf: "center",
             width: 238,
+          }}
+          onPress={() => {
+            if (url.trim() && onAddSource) {
+              onAddSource({
+                title: url.trim(),
+                type: "Website",
+                details: "",
+                backgroundColor: "#efeaf3",
+              });
+              setUrl("");
+            }
           }}
         >
           <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>

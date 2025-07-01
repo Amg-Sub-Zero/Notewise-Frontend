@@ -6,6 +6,8 @@ import {
   ScrollView,
   Modal,
   Animated,
+  Platform,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,6 +15,7 @@ import YouTubeScreen from "./youtube";
 import WebsiteScreen from "./website";
 import CopiedTextScreen from "./copied-text";
 import * as DocumentPicker from "expo-document-picker";
+import ChatScreen from "./ChatScreen";
 
 export default function Index() {
   const [activeTab, setActiveTab] = useState("Recent");
@@ -20,8 +23,59 @@ export default function Index() {
   const [isBackgroundVisible, setIsBackgroundVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState("main"); // "main", "youtube", "website", "copied-text"
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const [showChat, setShowChat] = useState(false);
+  const [selectedSource, setSelectedSource] = useState(null);
+  const [showLoading, setShowLoading] = useState(false);
+  const [chatAnim] = useState(new Animated.Value(0));
+
+  // Sample sources data with shared property
+  const [sources] = useState([
+    {
+      id: 1,
+      title: "Research Paper.pdf",
+      type: "PDF",
+      addedDate: "2 days ago",
+      details: "15 pages",
+      backgroundColor: "#e3f3e9",
+      isShared: false,
+    },
+    {
+      id: 2,
+      title: "Wikipedia Article",
+      type: "Website",
+      addedDate: "1 week ago",
+      details: "Web content",
+      backgroundColor: "#efeaf3",
+      isShared: true,
+    },
+    {
+      id: 3,
+      title: "YouTube Tutorial",
+      type: "YouTube",
+      addedDate: "3 days ago",
+      details: "12:45 duration",
+      backgroundColor: "#e3f3e9",
+      isShared: false,
+    },
+  ]);
 
   const tabs = ["Recent", "Shared", "Title", "Downloaded"];
+
+  // Filter sources based on active tab
+  const getFilteredSources = () => {
+    switch (activeTab) {
+      case "Shared":
+        return sources.filter((source) => source.isShared);
+      case "Recent":
+        return sources; // Show all sources for now
+      case "Title":
+        return sources.sort((a, b) => a.title.localeCompare(b.title));
+      case "Downloaded":
+        return sources.filter((source) => source.type === "PDF"); // Assuming PDFs are downloaded
+      default:
+        return sources;
+    }
+  };
 
   const openModal = () => {
     setIsModalVisible(true);
@@ -61,9 +115,29 @@ export default function Index() {
       multiple: false,
     });
     if (result.type === "success") {
-      // You can handle the selected PDF file here (e.g., upload or show file name)
-      alert(`Selected PDF: ${result.name}`);
+      // Open chat screen with PDF as source
+      setIsModalVisible(false);
+      setTimeout(() => {
+        setSelectedSource({
+          title: result.name,
+          type: "PDF",
+          details: "PDF file",
+          backgroundColor: "#e3f3e9",
+        });
+        setShowChat(true);
+      }, 300);
     }
+  };
+
+  // Handler for all add source flows
+  const handleAddSource = (source) => {
+    setIsModalVisible(false);
+    setShowLoading(true);
+    setTimeout(() => {
+      setShowLoading(false);
+      setSelectedSource(source);
+      setShowChat(true);
+    }, 1200);
   };
 
   const TabButton = ({ title, isActive, onPress }) => (
@@ -91,374 +165,404 @@ export default function Index() {
     </TouchableOpacity>
   );
 
+  useEffect(() => {
+    if (showChat) {
+      Animated.timing(chatAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(chatAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [showChat]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* Tab Navigation */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          paddingVertical: 16,
-          paddingHorizontal: 16,
-          backgroundColor: "#f8f9fa",
-          marginTop: 0,
-        }}
-      >
-        {tabs.map((tab) => (
-          <TabButton
-            key={tab}
-            title={tab}
-            isActive={activeTab === tab}
-            onPress={() => setActiveTab(tab)}
-          />
-        ))}
-      </View>
-
-      {/* Content Area */}
-      <ScrollView style={{ flex: 1, padding: 16 }}>
+      {showLoading && (
         <View
           style={{
-            flex: 1,
-            justifyContent: "flex-start",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 2000,
+            backgroundColor: "rgba(255,255,255,0.85)",
+            justifyContent: "center",
             alignItems: "center",
-            paddingTop: 0,
           }}
         >
-          {/* Sources Added Views */}
-          <View style={{ width: "100%", marginBottom: 20 }}>
-            {/* First Source View */}
-            <View
-              style={{
-                backgroundColor: "#e3f3e9",
-                padding: 15,
-                borderRadius: 12,
-                marginBottom: 12,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: "#333",
-                  marginBottom: 5,
-                }}
-              >
-                Research Paper.pdf
-              </Text>
-              <Text style={{ fontSize: 14, color: "#666" }}>
-                Added 2 days ago • 15 pages
-              </Text>
-            </View>
-
-            {/* Second Source View */}
-            <View
-              style={{
-                backgroundColor: "#efeaf3",
-                padding: 15,
-                borderRadius: 12,
-                marginBottom: 12,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: "#333",
-                  marginBottom: 5,
-                }}
-              >
-                Wikipedia Article
-              </Text>
-              <Text style={{ fontSize: 14, color: "#666" }}>
-                Added 1 week ago • Web content
-              </Text>
-            </View>
-
-            {/* Third Source View */}
-            <View
-              style={{
-                backgroundColor: "#e3f3e9",
-                padding: 15,
-                borderRadius: 12,
-                marginBottom: 12,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: "#333",
-                  marginBottom: 5,
-                }}
-              >
-                YouTube Tutorial
-              </Text>
-              <Text style={{ fontSize: 14, color: "#666" }}>
-                Added 3 days ago • 12:45 duration
-              </Text>
-            </View>
-          </View>
-
-          <Text
-            style={{
-              fontSize: 16,
-              color: "#333",
-              marginTop: 20,
-              fontWeight: "bold",
-            }}
-          >
-            Active Tab: {activeTab}
-          </Text>
+          <ActivityIndicator size="large" color="#3f66fb" />
         </View>
-      </ScrollView>
-
-      {/* Create New Button */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 55,
-          left: 0,
-          right: 0,
-          alignItems: "center",
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#007AFF",
-            paddingVertical: 17,
-            paddingHorizontal: 30,
-            borderRadius: 30,
-          }}
-          onPress={openModal}
-        >
-          <Text style={{ color: "#fff", fontSize: 16, fontWeight: "50" }}>
-            + Create New
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Modal */}
+      )}
       <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={closeModal}
+        visible={showChat && !!selectedSource}
+        animationType={Platform.OS === "ios" ? "none" : "none"}
+        transparent={false}
+        onRequestClose={() => setShowChat(false)}
       >
-        <Animated.View
-          style={{
-            flex: 1,
-            backgroundColor: isBackgroundVisible
-              ? "rgba(0, 0, 0, 0.3)"
-              : "transparent",
-            justifyContent: "flex-end",
-          }}
-        >
+        {showChat && selectedSource && (
           <Animated.View
             style={{
-              backgroundColor: "#fff",
-              padding: 20,
-              paddingTop: 30,
-              paddingBottom: 40,
-              height: "74%",
+              flex: 1,
               transform: [
                 {
-                  translateY: slideAnim.interpolate({
+                  translateX: chatAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [100, 0],
+                    outputRange: [500, 0], // 500 px from right
                   }),
                 },
               ],
             }}
           >
-            {/* Close Button */}
-            <TouchableOpacity
-              onPress={closeModal}
+            <ChatScreen
+              source={selectedSource}
+              onBack={() => setShowChat(false)}
+            />
+          </Animated.View>
+        )}
+      </Modal>
+      {!showChat && (
+        <>
+          {/* Tab Navigation */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              paddingVertical: 16,
+              paddingHorizontal: 16,
+              backgroundColor: "#f8f9fa",
+              marginTop: 0,
+            }}
+          >
+            {tabs.map((tab) => (
+              <TabButton
+                key={tab}
+                title={tab}
+                isActive={activeTab === tab}
+                onPress={() => setActiveTab(tab)}
+              />
+            ))}
+          </View>
+
+          {/* Content Area */}
+          <ScrollView style={{ flex: 1, padding: 16 }}>
+            <View
               style={{
-                position: "absolute",
-                top: 5,
-                right: 10,
-                zIndex: 10,
-                padding: 5,
+                flex: 1,
+                justifyContent: "flex-start",
+                alignItems: "center",
+                paddingTop: 0,
               }}
             >
-              <Text style={{ fontSize: 35, color: "#666" }}>×</Text>
-            </TouchableOpacity>
+              {/* Sources Added Views */}
+              <View style={{ width: "100%", marginBottom: 20 }}>
+                {getFilteredSources().map((source) => (
+                  <TouchableOpacity
+                    key={source.id}
+                    onPress={() => {
+                      setSelectedSource(source);
+                      setShowChat(true);
+                    }}
+                    style={{
+                      backgroundColor: source.backgroundColor,
+                      padding: 15,
+                      borderRadius: 12,
+                      marginBottom: 12,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: "#333",
+                        marginBottom: 5,
+                      }}
+                    >
+                      {source.title}
+                    </Text>
+                    <Text style={{ fontSize: 14, color: "#666" }}>
+                      Added {source.addedDate} • {source.details}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </ScrollView>
 
-            {/* Main Screen */}
+          {/* Create New Button */}
+          <View
+            style={{
+              position: "absolute",
+              bottom: 55,
+              left: 0,
+              right: 0,
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#007AFF",
+                paddingVertical: 17,
+                paddingHorizontal: 30,
+                borderRadius: 30,
+              }}
+              onPress={openModal}
+            >
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "50" }}>
+                + Create New
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Modal */}
+          <Modal
+            visible={isModalVisible}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={closeModal}
+          >
             <Animated.View
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "#fff",
-                padding: 20,
-                paddingTop: 30,
-                paddingBottom: 40,
-                zIndex: currentScreen === "main" ? 2 : 1,
+                flex: 1,
+                backgroundColor: isBackgroundVisible
+                  ? "rgba(0, 0, 0, 0.3)"
+                  : "transparent",
+                justifyContent: "flex-end",
               }}
             >
-              {/* Header */}
-              <View
+              <Animated.View
                 style={{
-                  alignItems: "center",
-                  marginBottom: 30,
+                  backgroundColor: "#fff",
+                  padding: 20,
                   paddingTop: 30,
+                  paddingBottom: 40,
+                  height: "74%",
+                  transform: [
+                    {
+                      translateY: slideAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [100, 0],
+                      }),
+                    },
+                  ],
                 }}
               >
-                <View
+                {/* Close Button */}
+                <TouchableOpacity
+                  onPress={closeModal}
                   style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 30,
-                    backgroundColor: "#f1f3ff",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginBottom: 15,
+                    position: "absolute",
+                    top: 5,
+                    right: 10,
+                    zIndex: 10,
+                    padding: 5,
                   }}
                 >
-                  <Ionicons
-                    name="duplicate-outline"
-                    size={26}
-                    color={"#3f66fb"}
+                  <Text style={{ fontSize: 35, color: "#666" }}>×</Text>
+                </TouchableOpacity>
+
+                {/* Main Screen */}
+                <Animated.View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "#fff",
+                    padding: 20,
+                    paddingTop: 30,
+                    paddingBottom: 40,
+                    zIndex: currentScreen === "main" ? 2 : 1,
+                  }}
+                >
+                  {/* Header */}
+                  <View
+                    style={{
+                      alignItems: "center",
+                      marginBottom: 30,
+                      paddingTop: 30,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 30,
+                        backgroundColor: "#f1f3ff",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginBottom: 15,
+                      }}
+                    >
+                      <Ionicons
+                        name="duplicate-outline"
+                        size={26}
+                        color={"#3f66fb"}
+                      />
+                    </View>
+                    <Text
+                      style={{ fontSize: 23, fontWeight: "5", color: "#333" }}
+                    >
+                      Add Source
+                    </Text>
+                  </View>
+
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#666",
+                      marginBottom: 20,
+                      textAlign: "center",
+                    }}
+                  >
+                    Sources let Notewise base its responses on the information
+                    that matters most to you.
+                  </Text>
+
+                  {/* Create options */}
+                  <TouchableOpacity
+                    style={{
+                      padding: 15,
+                      backgroundColor: "#f8f9fa",
+                      borderRadius: 24,
+                      marginBottom: 10,
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: "blue",
+                    }}
+                    onPress={pickPDF}
+                  >
+                    <Text
+                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                    >
+                      PDF
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{
+                      padding: 15,
+                      backgroundColor: "#f8f9fa",
+                      borderRadius: 24,
+                      marginBottom: 10,
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: "blue",
+                    }}
+                    onPress={() => navigateToScreen("website")}
+                  >
+                    <Text
+                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                    >
+                      Website
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{
+                      padding: 15,
+                      backgroundColor: "#f8f9fa",
+                      borderRadius: 24,
+                      marginBottom: 10,
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: "blue",
+                    }}
+                    onPress={() => navigateToScreen("youtube")}
+                  >
+                    <Text
+                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                    >
+                      YouTube
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{
+                      padding: 15,
+                      backgroundColor: "#f8f9fa",
+                      borderRadius: 24,
+                      marginBottom: 10,
+                      alignItems: "center",
+                      borderWidth: 1,
+                      borderColor: "blue",
+                    }}
+                    onPress={() => navigateToScreen("copied-text")}
+                  >
+                    <Text
+                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                    >
+                      Copied text
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
+
+                {/* YouTube Screen */}
+                <Animated.View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "#fff",
+                    zIndex: currentScreen === "youtube" ? 2 : 1,
+                  }}
+                >
+                  <YouTubeScreen
+                    onBack={goBackToMain}
+                    onAddSource={handleAddSource}
                   />
-                </View>
-                <Text style={{ fontSize: 23, fontWeight: "5", color: "#333" }}>
-                  Add Source
-                </Text>
-              </View>
+                </Animated.View>
 
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#666",
-                  marginBottom: 20,
-                  textAlign: "center",
-                }}
-              >
-                Sources let Notewise base its responses on the information that
-                matters most to you.
-              </Text>
+                {/* Website Screen */}
+                <Animated.View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "#fff",
+                    zIndex: currentScreen === "website" ? 2 : 1,
+                  }}
+                >
+                  <WebsiteScreen
+                    onBack={goBackToMain}
+                    onAddSource={handleAddSource}
+                  />
+                </Animated.View>
 
-              {/* Create options */}
-              <TouchableOpacity
-                style={{
-                  padding: 15,
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: 24,
-                  marginBottom: 10,
-                  alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: "blue",
-                }}
-                onPress={pickPDF}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                  PDF
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{
-                  padding: 15,
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: 24,
-                  marginBottom: 10,
-                  alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: "blue",
-                }}
-                onPress={() => navigateToScreen("website")}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                  Website
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{
-                  padding: 15,
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: 24,
-                  marginBottom: 10,
-                  alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: "blue",
-                }}
-                onPress={() => navigateToScreen("youtube")}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                  YouTube
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{
-                  padding: 15,
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: 24,
-                  marginBottom: 10,
-                  alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: "blue",
-                }}
-                onPress={() => navigateToScreen("copied-text")}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "45", color: "blue" }}>
-                  Copied text
-                </Text>
-              </TouchableOpacity>
+                {/* Copied Text Screen */}
+                <Animated.View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "#fff",
+                    zIndex: currentScreen === "copied-text" ? 2 : 1,
+                  }}
+                >
+                  <CopiedTextScreen
+                    onBack={goBackToMain}
+                    onAddSource={handleAddSource}
+                  />
+                </Animated.View>
+              </Animated.View>
             </Animated.View>
-
-            {/* YouTube Screen */}
-            <Animated.View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "#fff",
-                zIndex: currentScreen === "youtube" ? 2 : 1,
-              }}
-            >
-              <YouTubeScreen onBack={goBackToMain} />
-            </Animated.View>
-
-            {/* Website Screen */}
-            <Animated.View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "#fff",
-                zIndex: currentScreen === "website" ? 2 : 1,
-              }}
-            >
-              <WebsiteScreen onBack={goBackToMain} />
-            </Animated.View>
-
-            {/* Copied Text Screen */}
-            <Animated.View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "#fff",
-                zIndex: currentScreen === "copied-text" ? 2 : 1,
-              }}
-            >
-              <CopiedTextScreen onBack={goBackToMain} />
-            </Animated.View>
-          </Animated.View>
-        </Animated.View>
-      </Modal>
+          </Modal>
+        </>
+      )}
     </SafeAreaView>
   );
 }

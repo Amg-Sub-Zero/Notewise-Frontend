@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function CopiedTextScreen({ onBack }) {
+export default function CopiedTextScreen({ onBack, onAddSource }) {
   const [text, setText] = useState("");
 
   return (
@@ -96,6 +96,17 @@ export default function CopiedTextScreen({ onBack }) {
             marginTop: 220,
             alignSelf: "center",
             width: 238,
+          }}
+          onPress={() => {
+            if (text.trim() && onAddSource) {
+              onAddSource({
+                title: text.trim(),
+                type: "Copied Text",
+                details: "",
+                backgroundColor: "#f1f3ff",
+              });
+              setText("");
+            }
           }}
         >
           <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>

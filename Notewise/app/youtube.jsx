@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function YouTubeScreen({ onBack }) {
+export default function YouTubeScreen({ onBack, onAddSource }) {
   const [url, setUrl] = useState("");
 
   return (
@@ -109,6 +109,17 @@ export default function YouTubeScreen({ onBack }) {
             marginTop: 128,
             alignSelf: "center",
             width: 238,
+          }}
+          onPress={() => {
+            if (url.trim() && onAddSource) {
+              onAddSource({
+                title: url.trim(),
+                type: "YouTube",
+                details: "",
+                backgroundColor: "#e3f3e9",
+              });
+              setUrl("");
+            }
           }}
         >
           <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>
