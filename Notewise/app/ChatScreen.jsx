@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import BottomTabBar from "./BottomTabBar";
 import SourceListScreen from "./SourceListScreen";
+import StudioScreen from "./StudioScreen";
 
 export default function ChatScreen({
   source,
@@ -28,11 +29,17 @@ export default function ChatScreen({
             text: source.title,
             sender: "source",
           },
+          {
+            id: 2,
+            text: "Hey Amg Sub Zero",
+            sender: "app",
+          },
         ]
       : []
   );
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("chat");
+  const [inputFocused, setInputFocused] = useState(false);
 
   const sendMessage = () => {
     if (input.trim() === "") return;
@@ -41,14 +48,37 @@ export default function ChatScreen({
       { id: messages.length + 1, text: input, sender: "user" },
     ]);
     setInput("");
+    setTimeout(() => {
+      setMessages((current) => [
+        ...current,
+        {
+          id: (current[current.length - 1]?.id || 0) + 1,
+          text: "Hey Amg Sub Zero",
+          sender: "app",
+        },
+      ]);
+    }, 500);
   };
 
+  useEffect(() => {
+    if (source) {
+      setMessages([
+        {
+          id: 1,
+          text: source.title,
+          sender: "source",
+        },
+        {
+          id: 2,
+          text: "Hey Amg Sub Zero",
+          sender: "app",
+        },
+      ]);
+    }
+  }, [source]);
+
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-    >
+    <View style={styles.container}>
       {activeTab === "source" ? (
         <SourceListScreen
           sources={source ? [source] : []}
@@ -56,6 +86,12 @@ export default function ChatScreen({
           onAddSource={onAddSource}
           onBack={onBack}
           title={source?.title}
+        />
+      ) : activeTab === "studio" ? (
+        <StudioScreen
+          source={source}
+          onBack={onBack}
+          onGenerateAudio={() => {}}
         />
       ) : (
         <>
@@ -81,35 +117,124 @@ export default function ChatScreen({
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <View
-                style={
-                  item.sender === "user"
-                    ? styles.userMessage
-                    : styles.sourceMessage
-                }
+                style={[
+                  {
+                    flexDirection: "row",
+                    justifyContent:
+                      item.sender === "user" || item.sender === "source"
+                        ? "flex-end"
+                        : "flex-start",
+                    marginBottom: 10,
+                  },
+                ]}
               >
-                <Text style={styles.messageText}>{item.text}</Text>
+                <View
+                  style={[
+                    {
+                      backgroundColor:
+                        item.sender === "user" || item.sender === "source"
+                          ? "#e3f3e9"
+                          : "#efeaf3",
+                      paddingVertical: 10,
+                      paddingHorizontal: 16,
+                      borderTopLeftRadius: 16,
+                      borderTopRightRadius: 16,
+                      borderBottomLeftRadius:
+                        item.sender === "user" || item.sender === "source"
+                          ? 16
+                          : 4,
+                      borderBottomRightRadius:
+                        item.sender === "user" || item.sender === "source"
+                          ? 4
+                          : 16,
+                      maxWidth: "80%",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.07,
+                      shadowRadius: 2,
+                      elevation: 1,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.messageText,
+                      {
+                        textAlign:
+                          item.sender === "user" || item.sender === "source"
+                            ? "right"
+                            : "left",
+                        backgroundColor: "transparent",
+                      },
+                    ]}
+                  >
+                    {item.text}
+                  </Text>
+                </View>
               </View>
             )}
             contentContainerStyle={{ padding: 16, flexGrow: 1 }}
           />
 
           {/* Input Area */}
-          <View style={styles.inputArea}>
-            <TextInput
-              style={styles.input}
-              value={input}
-              onChangeText={setInput}
-              placeholder="Type a message..."
-            />
-            <TouchableOpacity onPress={sendMessage} style={styles.sendBtn}>
-              <Ionicons name="send" size={22} color="#1976d2" />
-            </TouchableOpacity>
-          </View>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+          >
+            <View style={styles.inputArea}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  position: "relative",
+                  marginHorizontal: 8,
+                }}
+              >
+                <TextInput
+                  style={[styles.input, { paddingRight: 40 }]}
+                  value={input}
+                  onChangeText={setInput}
+                  placeholder="Ask 1 source"
+                  placeholderTextColor="#666"
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
+                />
+                <TouchableOpacity
+                  onPress={sendMessage}
+                  style={{
+                    position: "absolute",
+                    right: 8,
+                    top: 0,
+                    bottom: 0,
+                    justifyContent: "center",
+                  }}
+                >
+                  <Ionicons
+                    name={inputFocused ? "send" : "document-outline"}
+                    size={22}
+                    color={inputFocused ? "#1976d2" : "#333"}
+                    style={{ marginRight: 10 }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <Text
+              style={{
+                fontSize: 12,
+                color: "#888",
+                textAlign: "center",
+                marginBottom: 10,
+              }}
+            >
+              Notewise can be inaccurate, so double-check.
+            </Text>
+          </KeyboardAvoidingView>
         </>
       )}
       {/* Bottom Tab Bar */}
       <BottomTabBar activeTab={activeTab} onTabPress={setActiveTab} />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -141,22 +266,6 @@ const styles = StyleSheet.create({
     color: "#888",
     marginTop: 2,
   },
-  sourceMessage: {
-    alignSelf: "flex-start",
-    backgroundColor: "#f1f3ff",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 10,
-    maxWidth: "80%",
-  },
-  userMessage: {
-    alignSelf: "flex-end",
-    backgroundColor: "#e3f3e9",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 10,
-    maxWidth: "80%",
-  },
   messageText: {
     fontSize: 16,
     color: "#333",
@@ -164,9 +273,8 @@ const styles = StyleSheet.create({
   inputArea: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
+    paddingVertical: 12,
+    paddingHorizontal: 0,
     backgroundColor: "#fff",
   },
   input: {
@@ -176,6 +284,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     borderRadius: 20,
     marginRight: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
   sendBtn: {
     padding: 8,

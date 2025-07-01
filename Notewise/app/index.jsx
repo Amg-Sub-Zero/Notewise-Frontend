@@ -27,9 +27,7 @@ export default function Index() {
   const [selectedSource, setSelectedSource] = useState(null);
   const [showLoading, setShowLoading] = useState(false);
   const [chatAnim] = useState(new Animated.Value(0));
-
-  // Sample sources data with shared property
-  const [sources] = useState([
+  const [sources, setSources] = useState([
     {
       id: 1,
       title: "Research Paper.pdf",
@@ -135,7 +133,19 @@ export default function Index() {
     setShowLoading(true);
     setTimeout(() => {
       setShowLoading(false);
-      setSelectedSource(source);
+      setSources((prev) => [
+        {
+          ...source,
+          id: Date.now(),
+          addedDate: "today",
+        },
+        ...prev,
+      ]);
+      setSelectedSource({
+        ...source,
+        id: Date.now(),
+        addedDate: "today",
+      });
       setShowChat(true);
     }, 1200);
   };

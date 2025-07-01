@@ -16,7 +16,7 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
         onPress={() => onTabPress?.("source")}
       >
         <Ionicons
-          name="document-text-outline"
+          name="folder-outline"
           size={28}
           color={activeTab === "source" ? "#3f66fb" : "#888"}
         />
@@ -34,7 +34,7 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
         onPress={() => onTabPress?.("chat")}
       >
         <Ionicons
-          name="chatbubble-ellipses"
+          name="chatbubble-ellipses-outline"
           size={34}
           color={activeTab === "chat" ? "#3f66fb" : "#888"}
         />
