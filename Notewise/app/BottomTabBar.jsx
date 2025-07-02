@@ -16,7 +16,7 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
         onPress={() => onTabPress?.("source")}
       >
         <Ionicons
-          name="folder-outline"
+          name={activeTab === "source" ? "folder" : "folder-outline"}
           size={28}
           color={activeTab === "source" ? "#3f66fb" : "#888"}
         />
@@ -34,7 +34,11 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
         onPress={() => onTabPress?.("chat")}
       >
         <Ionicons
-          name="chatbubble-ellipses-outline"
+          name={
+            activeTab === "chat"
+              ? "chatbubble-ellipses"
+              : "chatbubble-ellipses-outline"
+          }
           size={34}
           color={activeTab === "chat" ? "#3f66fb" : "#888"}
         />
@@ -52,7 +56,7 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
         onPress={() => onTabPress?.("studio")}
       >
         <Ionicons
-          name="easel-outline"
+          name={activeTab === "studio" ? "easel" : "easel-outline"}
           size={28}
           color={activeTab === "studio" ? "#3f66fb" : "#888"}
         />
@@ -80,7 +84,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderTopColor: "#eee",
-    marginBottom: 40,
+    marginBottom: 30,
+    gap: 50,
   },
   tabItem: {
     flex: 1,
