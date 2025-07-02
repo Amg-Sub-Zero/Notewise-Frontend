@@ -1,7 +1,12 @@
 import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View, Text } from "react-native";
-import { StatusBar } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  StatusBar,
+  SafeAreaView,
+} from "react-native";
 import React, { useState } from "react";
 import AccountSwitcher from "./AccountSwitcher";
 
@@ -32,66 +37,65 @@ export default function RootLayout() {
   };
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f9fa" }}>
       <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: true,
-          headerTitle: "",
-          headerLeft: () => (
-            <View
+      {/* Custom Header Tab */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 12,
+          paddingTop: 4,
+          paddingBottom: 4,
+          minHeight: 44,
+          backgroundColor: "#f8f9fa",
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Ionicons name="document-text" size={35} color="#333" />
+          <Text
+            style={{
+              fontWeight: "700",
+              fontSize: 30,
+              color: "#333",
+              marginLeft: 8,
+            }}
+          >
+            Notewise
+          </Text>
+        </View>
+        <TouchableOpacity style={{}} onPress={() => setModalVisible(true)}>
+          <View
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 20,
+              backgroundColor: getColor(currentAccount.name),
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginLeft: 1,
-                marginTop: 18,
-                height: 35,
-                justifyContent: "center",
+                color: "#fff",
+                fontSize: 16,
+                fontWeight: "bold",
               }}
             >
-              <Ionicons name="document-text" size={35} color="#333" />
-              <Text style={{ fontWeight: "70", fontSize: 30, color: "#333" }}>
-                Notewise
-              </Text>
-            </View>
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 19, marginTop: 18 }}
-              onPress={() => setModalVisible(true)}
-            >
-              <View
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 20,
-                  backgroundColor: getColor(currentAccount.name),
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontSize: 16,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {getInitial(currentAccount.name)}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: "#f8f9fa",
-            height: 50,
-            borderBottomWidth: 0,
-          },
-          headerTitleContainerStyle: {
-            alignItems: "center",
-          },
-        }}
-      />
+              {getInitial(currentAccount.name)}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      {/* Main Content (Stack) */}
+      <View style={{ flex: 1, backgroundColor: "#f8f9fa" }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
+      </View>
       <AccountSwitcher
         accounts={accounts}
         setAccounts={setAccounts}
@@ -100,6 +104,6 @@ export default function RootLayout() {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       />
-    </>
+    </SafeAreaView>
   );
 }

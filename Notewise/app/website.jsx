@@ -77,6 +77,7 @@ export default function WebsiteScreen({ onBack, onAddSource }) {
               backgroundColor: "#f9f9f9",
             }}
             placeholder="Paste URL"
+            placeholderTextColor="#888"
             value={url}
             onChangeText={setUrl}
             autoCapitalize="none"

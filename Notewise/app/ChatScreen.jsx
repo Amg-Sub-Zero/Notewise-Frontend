@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomTabBar from "./BottomTabBar";
 import SourceListScreen from "./SourceListScreen";
 import StudioScreen from "./StudioScreen";
+import { useRouter, useNavigation } from "expo-router";
 
 export default function ChatScreen({
   source,
@@ -40,6 +41,16 @@ export default function ChatScreen({
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("chat");
   const [inputFocused, setInputFocused] = useState(false);
+  const router = useRouter();
+  const navigation = useNavigation();
+
+  const handleBack = () => {
+    if (navigation.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/"); // Replace with your main/home route if different
+    }
+  };
 
   const sendMessage = () => {
     if (input.trim() === "") return;
@@ -97,7 +108,7 @@ export default function ChatScreen({
         <>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+            <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
               <Ionicons name="arrow-back" size={24} color="#333" />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>

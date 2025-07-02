@@ -78,6 +78,7 @@ export default function CopiedTextScreen({ onBack, onAddSource }) {
               textAlignVertical: "top",
             }}
             placeholder="Paste your text here..."
+            placeholderTextColor="#888"
             value={text}
             onChangeText={setText}
             multiline
