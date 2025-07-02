@@ -125,6 +125,10 @@ export default function ChatScreen({
     return data;
   };
 
+  const handleAudioOverview = () => {
+    setActiveTab("studio");
+  };
+
   return (
     <View style={styles.container}>
       {activeTab === "source" ? (
@@ -167,7 +171,10 @@ export default function ChatScreen({
               if (item.type === "audio-overview") {
                 return (
                   <View style={styles.audioOverviewContainer}>
-                    <TouchableOpacity style={styles.audioOverviewButton}>
+                    <TouchableOpacity
+                      style={styles.audioOverviewButton}
+                      onPress={handleAudioOverview}
+                    >
                       <View style={styles.audioWaveform}>
                         <View style={[styles.waveformBar, { height: 8 }]} />
                         <View style={[styles.waveformBar, { height: 12 }]} />
