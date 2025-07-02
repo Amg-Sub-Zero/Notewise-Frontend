@@ -7,10 +7,17 @@ import {
   Text,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "./theme";
 
 export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
+  const theme = useTheme();
   return (
-    <View style={styles.tabBar}>
+    <View
+      style={[
+        styles.tabBar,
+        { backgroundColor: theme.tabBar, borderTopColor: theme.tabBarBorder },
+      ]}
+    >
       <TouchableOpacity
         style={styles.tabItem}
         onPress={() => onTabPress?.("source")}
@@ -18,12 +25,27 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
         <Ionicons
           name={activeTab === "source" ? "folder" : "folder-outline"}
           size={28}
-          color={activeTab === "source" ? "#3f66fb" : "#888"}
+          color={
+            activeTab === "source"
+              ? theme.mode === "dark"
+                ? "#fff"
+                : "#333"
+              : theme.mode === "dark"
+              ? "#666"
+              : "#333"
+          }
         />
         <Text
           style={[
             styles.tabLabel,
-            { color: activeTab === "source" ? "#3f66fb" : "#888" },
+            {
+              color:
+                theme.mode === "dark"
+                  ? "#fff"
+                  : activeTab === "source"
+                  ? "#333"
+                  : "#333",
+            },
           ]}
         >
           Source
@@ -40,12 +62,27 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
               : "chatbubble-ellipses-outline"
           }
           size={34}
-          color={activeTab === "chat" ? "#3f66fb" : "#888"}
+          color={
+            activeTab === "chat"
+              ? theme.mode === "dark"
+                ? "#fff"
+                : "#333"
+              : theme.mode === "dark"
+              ? "#666"
+              : "#333"
+          }
         />
         <Text
           style={[
             styles.tabLabel,
-            { color: activeTab === "chat" ? "#3f66fb" : "#888" },
+            {
+              color:
+                theme.mode === "dark"
+                  ? "#fff"
+                  : activeTab === "chat"
+                  ? "#333"
+                  : "#333",
+            },
           ]}
         >
           Chat
@@ -58,12 +95,27 @@ export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
         <Ionicons
           name={activeTab === "studio" ? "easel" : "easel-outline"}
           size={28}
-          color={activeTab === "studio" ? "#3f66fb" : "#888"}
+          color={
+            activeTab === "studio"
+              ? theme.mode === "dark"
+                ? "#fff"
+                : "#333"
+              : theme.mode === "dark"
+              ? "#666"
+              : "#333"
+          }
         />
         <Text
           style={[
             styles.tabLabel,
-            { color: activeTab === "studio" ? "#3f66fb" : "#888" },
+            {
+              color:
+                theme.mode === "dark"
+                  ? "#fff"
+                  : activeTab === "studio"
+                  ? "#333"
+                  : "#333",
+            },
           ]}
         >
           Studio
@@ -81,10 +133,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 8,
     paddingBottom: Platform.OS === "ios" ? 24 : 12,
-    backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderTopColor: "#eee",
-    marginBottom: 30,
+    marginBottom: 50,
     gap: 50,
   },
   tabItem: {

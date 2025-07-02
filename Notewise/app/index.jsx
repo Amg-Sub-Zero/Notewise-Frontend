@@ -16,6 +16,7 @@ import WebsiteScreen from "./website";
 import CopiedTextScreen from "./copied-text";
 import * as DocumentPicker from "expo-document-picker";
 import ChatScreen from "./ChatScreen";
+import { useTheme } from "./theme";
 
 export default function Index() {
   const [activeTab, setActiveTab] = useState("Recent");
@@ -58,6 +59,8 @@ export default function Index() {
   ]);
 
   const tabs = ["Recent", "Shared", "Title", "Downloaded"];
+
+  const theme = useTheme();
 
   // Filter sources based on active tab
   const getFilteredSources = () => {
@@ -160,14 +163,18 @@ export default function Index() {
         paddingVertical: 9,
         marginHorizontal: 5,
         borderRadius: 22,
-        backgroundColor: isActive ? "#eee" : "transparent",
+        backgroundColor: isActive
+          ? theme.mode === "dark"
+            ? "#fff"
+            : "#eee"
+          : "transparent",
       }}
     >
       <Text
         style={{
           fontSize: 16,
           fontWeight: isActive ? "bold" : "normal",
-          color: isActive ? "#333" : "#666",
+          color: isActive ? "#333" : theme.mode === "dark" ? "#fff" : "#666",
         }}
       >
         {title}
@@ -202,7 +209,8 @@ export default function Index() {
             right: 0,
             bottom: 0,
             zIndex: 2000,
-            backgroundColor: "rgba(255,255,255,0.85)",
+            backgroundColor:
+              theme.mode === "dark" ? "#181a20" : "rgba(255,255,255,0.85)",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -247,7 +255,7 @@ export default function Index() {
               alignItems: "center",
               paddingVertical: 16,
               paddingHorizontal: 16,
-              backgroundColor: "#f8f9fa",
+              backgroundColor: theme.background,
               marginTop: 0,
             }}
           >
@@ -262,7 +270,9 @@ export default function Index() {
           </View>
 
           {/* Content Area */}
-          <ScrollView style={{ flex: 1, padding: 16 }}>
+          <ScrollView
+            style={{ flex: 1, padding: 16, backgroundColor: theme.background }}
+          >
             <View
               style={{
                 flex: 1,
@@ -281,7 +291,8 @@ export default function Index() {
                       setShowChat(true);
                     }}
                     style={{
-                      backgroundColor: source.backgroundColor,
+                      backgroundColor:
+                        theme.mode === "dark" ? "#333" : source.backgroundColor,
                       padding: 15,
                       borderRadius: 12,
                       marginBottom: 12,
@@ -291,13 +302,13 @@ export default function Index() {
                       style={{
                         fontSize: 16,
                         fontWeight: "bold",
-                        color: "#333",
+                        color: theme.text,
                         marginBottom: 5,
                       }}
                     >
                       {source.title}
                     </Text>
-                    <Text style={{ fontSize: 14, color: "#666" }}>
+                    <Text style={{ fontSize: 14, color: theme.text }}>
                       Added {source.addedDate} • {source.details}
                     </Text>
                   </TouchableOpacity>
@@ -318,7 +329,7 @@ export default function Index() {
           >
             <TouchableOpacity
               style={{
-                backgroundColor: "#333",
+                backgroundColor: theme.mode === "dark" ? theme.primary : "#333",
                 paddingVertical: 17,
                 paddingHorizontal: 30,
                 borderRadius: 30,
@@ -342,14 +353,16 @@ export default function Index() {
               style={{
                 flex: 1,
                 backgroundColor: isBackgroundVisible
-                  ? "rgba(0, 0, 0, 0.3)"
+                  ? theme.mode === "dark"
+                    ? "rgba(24, 26, 32, 0.7)"
+                    : "rgba(0, 0, 0, 0.3)"
                   : "transparent",
                 justifyContent: "flex-end",
               }}
             >
               <Animated.View
                 style={{
-                  backgroundColor: "#fff",
+                  backgroundColor: theme.background,
                   padding: 20,
                   paddingTop: 30,
                   paddingBottom: 40,
@@ -375,7 +388,7 @@ export default function Index() {
                     padding: 5,
                   }}
                 >
-                  <Text style={{ fontSize: 35, color: "#666" }}>×</Text>
+                  <Text style={{ fontSize: 35, color: theme.text }}>×</Text>
                 </TouchableOpacity>
 
                 {/* Main Screen */}
@@ -386,7 +399,7 @@ export default function Index() {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    backgroundColor: "#fff",
+                    backgroundColor: theme.background,
                     padding: 20,
                     paddingTop: 30,
                     paddingBottom: 40,
@@ -406,7 +419,8 @@ export default function Index() {
                         width: 60,
                         height: 60,
                         borderRadius: 30,
-                        backgroundColor: "#f1f3ff",
+                        backgroundColor:
+                          theme.mode === "dark" ? "#fff" : theme.secondary,
                         justifyContent: "center",
                         alignItems: "center",
                         marginBottom: 15,
@@ -415,11 +429,15 @@ export default function Index() {
                       <Ionicons
                         name="duplicate-outline"
                         size={26}
-                        color={"#3f66fb"}
+                        color={theme.primary}
                       />
                     </View>
                     <Text
-                      style={{ fontSize: 23, fontWeight: "5", color: "#333" }}
+                      style={{
+                        fontSize: 23,
+                        fontWeight: "500",
+                        color: theme.text,
+                      }}
                     >
                       Add Source
                     </Text>
@@ -428,7 +446,7 @@ export default function Index() {
                   <Text
                     style={{
                       fontSize: 16,
-                      color: "#666",
+                      color: theme.text,
                       marginBottom: 20,
                       textAlign: "center",
                     }}
@@ -441,17 +459,22 @@ export default function Index() {
                   <TouchableOpacity
                     style={{
                       padding: 15,
-                      backgroundColor: "#f8f9fa",
+                      backgroundColor: theme.inputBackground,
                       borderRadius: 24,
                       marginBottom: 10,
                       alignItems: "center",
                       borderWidth: 1,
-                      borderColor: "blue",
+                      borderColor:
+                        theme.mode === "dark" ? "#fff" : theme.primary,
                     }}
                     onPress={pickPDF}
                   >
                     <Text
-                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "500",
+                        color: theme.mode === "dark" ? "#fff" : theme.primary,
+                      }}
                     >
                       PDF
                     </Text>
@@ -460,17 +483,22 @@ export default function Index() {
                   <TouchableOpacity
                     style={{
                       padding: 15,
-                      backgroundColor: "#f8f9fa",
+                      backgroundColor: theme.inputBackground,
                       borderRadius: 24,
                       marginBottom: 10,
                       alignItems: "center",
                       borderWidth: 1,
-                      borderColor: "blue",
+                      borderColor:
+                        theme.mode === "dark" ? "#fff" : theme.primary,
                     }}
                     onPress={() => navigateToScreen("website")}
                   >
                     <Text
-                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "500",
+                        color: theme.mode === "dark" ? "#fff" : theme.primary,
+                      }}
                     >
                       Website
                     </Text>
@@ -479,17 +507,22 @@ export default function Index() {
                   <TouchableOpacity
                     style={{
                       padding: 15,
-                      backgroundColor: "#f8f9fa",
+                      backgroundColor: theme.inputBackground,
                       borderRadius: 24,
                       marginBottom: 10,
                       alignItems: "center",
                       borderWidth: 1,
-                      borderColor: "blue",
+                      borderColor:
+                        theme.mode === "dark" ? "#fff" : theme.primary,
                     }}
                     onPress={() => navigateToScreen("youtube")}
                   >
                     <Text
-                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "500",
+                        color: theme.mode === "dark" ? "#fff" : theme.primary,
+                      }}
                     >
                       YouTube
                     </Text>
@@ -498,17 +531,22 @@ export default function Index() {
                   <TouchableOpacity
                     style={{
                       padding: 15,
-                      backgroundColor: "#f8f9fa",
+                      backgroundColor: theme.inputBackground,
                       borderRadius: 24,
                       marginBottom: 10,
                       alignItems: "center",
                       borderWidth: 1,
-                      borderColor: "blue",
+                      borderColor:
+                        theme.mode === "dark" ? "#fff" : theme.primary,
                     }}
                     onPress={() => navigateToScreen("copied-text")}
                   >
                     <Text
-                      style={{ fontSize: 16, fontWeight: "45", color: "blue" }}
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "500",
+                        color: theme.mode === "dark" ? "#fff" : theme.primary,
+                      }}
                     >
                       Copied text
                     </Text>

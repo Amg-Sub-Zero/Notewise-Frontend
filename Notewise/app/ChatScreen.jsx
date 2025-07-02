@@ -15,6 +15,7 @@ import BottomTabBar from "./BottomTabBar";
 import SourceListScreen from "./SourceListScreen";
 import StudioScreen from "./StudioScreen";
 import { useRouter, useNavigation } from "expo-router";
+import { useTheme } from "./theme";
 
 export default function ChatScreen({
   source,
@@ -40,6 +41,7 @@ export default function ChatScreen({
   const [inputFocused, setInputFocused] = useState(false);
   const router = useRouter();
   const navigation = useNavigation();
+  const theme = useTheme();
 
   const handleBack = () => {
     if (navigation.canGoBack()) {
@@ -130,7 +132,7 @@ export default function ChatScreen({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {activeTab === "source" ? (
         <SourceListScreen
           sources={source ? [source] : []}
@@ -148,16 +150,28 @@ export default function ChatScreen({
       ) : (
         <>
           {/* Header */}
-          <View style={styles.header}>
+          <View
+            style={[
+              styles.header,
+              { borderBottomColor: theme.mode === "dark" ? "#333" : "#eee" },
+            ]}
+          >
             <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
-              <Ionicons name="arrow-back" size={24} color="#333" />
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>
-              <Text style={styles.headerTitle}>
+              <Text style={[styles.headerTitle, { color: theme.text }]}>
                 {source?.title || "Source"}
               </Text>
               {source?.type && (
-                <Text style={styles.headerType}>{source.type}</Text>
+                <Text
+                  style={[
+                    styles.headerType,
+                    { color: theme.text, opacity: 0.7 },
+                  ]}
+                >
+                  {source.type}
+                </Text>
               )}
             </View>
             <View style={{ width: 24 }} />
@@ -172,7 +186,14 @@ export default function ChatScreen({
                 return (
                   <View style={styles.audioOverviewContainer}>
                     <TouchableOpacity
-                      style={styles.audioOverviewButton}
+                      style={[
+                        styles.audioOverviewButton,
+                        {
+                          backgroundColor:
+                            theme.mode === "dark" ? "#666" : "#f8f9fa",
+                          borderColor: theme.mode === "dark" ? "#333" : "#ccc",
+                        },
+                      ]}
                       onPress={handleAudioOverview}
                     >
                       <View style={styles.audioWaveform}>
@@ -184,7 +205,12 @@ export default function ChatScreen({
                         <View style={[styles.waveformBar, { height: 4 }]} />
                         <View style={[styles.waveformBar, { height: 12 }]} />
                       </View>
-                      <Text style={styles.audioOverviewText}>
+                      <Text
+                        style={[
+                          styles.audioOverviewText,
+                          { color: theme.mode === "dark" ? "#fff" : "#333" },
+                        ]}
+                      >
                         Audio Overview
                       </Text>
                     </TouchableOpacity>
@@ -205,7 +231,11 @@ export default function ChatScreen({
                   <Text
                     style={[
                       styles.messageText,
-                      { textAlign: "left", backgroundColor: "transparent" },
+                      {
+                        textAlign: "left",
+                        backgroundColor: "transparent",
+                        color: theme.text,
+                      },
                     ]}
                   >
                     {item.text}
@@ -268,7 +298,7 @@ export default function ChatScreen({
                   <View
                     style={[
                       {
-                        backgroundColor: "#efeaf3",
+                        backgroundColor: theme.secondary,
                         paddingVertical: 10,
                         paddingHorizontal: 16,
                         borderTopLeftRadius: 16,
@@ -290,6 +320,7 @@ export default function ChatScreen({
                         {
                           textAlign: "right",
                           backgroundColor: "transparent",
+                          color: theme.text,
                         },
                       ]}
                     >
@@ -307,7 +338,9 @@ export default function ChatScreen({
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
           >
-            <View style={styles.inputArea}>
+            <View
+              style={[styles.inputArea, { backgroundColor: theme.background }]}
+            >
               <View
                 style={{
                   flex: 1,
@@ -321,6 +354,9 @@ export default function ChatScreen({
                   style={[
                     styles.input,
                     {
+                      backgroundColor: theme.inputBackground,
+                      color: theme.inputText,
+                      borderColor: theme.border,
                       paddingRight: 40,
                       minHeight: 40,
                       maxHeight: 120,
@@ -330,7 +366,7 @@ export default function ChatScreen({
                   value={input}
                   onChangeText={setInput}
                   placeholder="Ask 1 source"
-                  placeholderTextColor="#666"
+                  placeholderTextColor={theme.text}
                   onFocus={() => setInputFocused(true)}
                   onBlur={() => setInputFocused(false)}
                   multiline={true}

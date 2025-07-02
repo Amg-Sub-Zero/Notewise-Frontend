@@ -7,12 +7,14 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "./theme";
 
 export default function YouTubeScreen({ onBack, onAddSource }) {
   const [url, setUrl] = useState("");
+  const theme = useTheme();
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: theme.background }}>
       {/* Header */}
       <View
         style={{
@@ -31,22 +33,22 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
             marginLeft: 12,
           }}
         >
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
         <View
           style={{
             width: 60,
             height: 60,
             borderRadius: 30,
-            backgroundColor: "#f1f3ff",
+            backgroundColor: theme.mode === "dark" ? "#fff" : theme.secondary,
             justifyContent: "center",
             alignItems: "center",
             marginBottom: 10,
           }}
         >
-          <Ionicons name="logo-youtube" size={20} color="#3f66fb" />
+          <Ionicons name="logo-youtube" size={20} color={theme.primary} />
         </View>
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>
+        <Text style={{ fontSize: 20, fontWeight: "bold", color: theme.text }}>
           YouTube URL
         </Text>
       </View>
@@ -56,7 +58,7 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
         <Text
           style={{
             fontSize: 14,
-            color: "#000",
+            color: theme.text,
             marginBottom: 20,
             textAlign: "center",
             fontWeight: "bold",
@@ -70,13 +72,15 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
           <TextInput
             style={{
               borderWidth: 1,
-              borderColor: "#ddd",
+              borderColor: theme.primary,
               borderRadius: 17,
               padding: 12,
               fontSize: 16,
-              backgroundColor: "#f9f9f9",
+              backgroundColor: theme.inputBackground,
+              color: theme.inputText,
             }}
             placeholder="Paste URL"
+            placeholderTextColor={theme.text}
             value={url}
             onChangeText={setUrl}
             autoCapitalize="none"
@@ -86,11 +90,11 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
         <Text
           style={{
             fontSize: 13,
-            color: "#000",
+            color: theme.text,
             marginBottom: 20,
             lineHeight: 20,
             fontWeight: "bold",
-            backgroundColor: "#fff",
+            backgroundColor: theme.background,
           }}
         >
           Note{"\n"}• Only the text transcript will be imported at this moment.
@@ -101,7 +105,7 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
         {/* Add Button */}
         <TouchableOpacity
           style={{
-            backgroundColor: "#3f66fb",
+            backgroundColor: theme.primary,
             paddingVertical: 17,
             paddingHorizontal: 20,
             borderRadius: 26,
@@ -116,13 +120,19 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
                 title: url.trim(),
                 type: "YouTube",
                 details: "",
-                backgroundColor: "#e3f3e9",
+                backgroundColor: theme.secondary,
               });
               setUrl("");
             }
           }}
         >
-          <Text style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}>
+          <Text
+            style={{
+              color: theme.background,
+              fontSize: 16,
+              fontWeight: "bold",
+            }}
+          >
             Add
           </Text>
         </TouchableOpacity>

@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "./theme";
 
 export default function SourceListScreen({
   sources,
@@ -15,15 +16,16 @@ export default function SourceListScreen({
   onBack,
   title,
 }) {
+  const theme = useTheme();
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: theme.border }]}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
         <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={styles.headerTitle}>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>
             {title || (sources && sources[0]?.title) || "Source"}
           </Text>
         </View>
@@ -35,7 +37,7 @@ export default function SourceListScreen({
             {sources.length === 0 && (
               <Text
                 style={{
-                  color: "#888",
+                  color: theme.text,
                   fontSize: 16,
                   textAlign: "center",
                   marginTop: 40,
@@ -57,13 +59,13 @@ export default function SourceListScreen({
                   style={{
                     fontSize: 16,
                     fontWeight: "bold",
-                    color: "#333",
+                    color: theme.text,
                     marginBottom: 5,
                   }}
                 >
                   {source.title}
                 </Text>
-                <Text style={{ fontSize: 14, color: "#666" }}>
+                <Text style={{ fontSize: 14, color: theme.text }}>
                   {source.addedDate ? `Added ${source.addedDate}` : ""}
                   {source.details ? ` • ${source.details}` : ""}
                 </Text>
@@ -74,8 +76,13 @@ export default function SourceListScreen({
       </ScrollView>
       {/* Floating Add Source Button */}
       <View style={styles.addBtnContainer}>
-        <TouchableOpacity style={styles.addBtn} onPress={onAddSource}>
-          <Text style={styles.addBtnText}>+ Add Source</Text>
+        <TouchableOpacity
+          style={[styles.addBtn, { backgroundColor: theme.primary }]}
+          onPress={onAddSource}
+        >
+          <Text style={[styles.addBtnText, { color: theme.background }]}>
+            + Add Source
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -90,7 +97,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
   },
   backBtn: {
     marginRight: 16,
@@ -99,7 +105,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
   },
   addBtnContainer: {
     position: "absolute",
@@ -109,13 +114,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addBtn: {
-    backgroundColor: "#333",
     paddingVertical: 17,
     paddingHorizontal: 30,
     borderRadius: 30,
   },
   addBtnText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "500",
   },

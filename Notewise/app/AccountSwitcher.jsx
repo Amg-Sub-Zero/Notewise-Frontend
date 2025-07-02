@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ManageAccounts from "./ManageAccounts";
+import { useTheme } from "./theme";
 
 const profileColors = [
   "#FF6B6B",
@@ -38,6 +39,7 @@ export default function AccountSwitcher({
   setModalVisible,
 }) {
   const [manageAccountsVisible, setManageAccountsVisible] = useState(false);
+  const theme = useTheme();
 
   return (
     <>
@@ -47,8 +49,21 @@ export default function AccountSwitcher({
         transparent={true}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+        <View
+          style={[
+            styles.modalOverlay,
+            {
+              backgroundColor:
+                theme.mode === "dark" ? "rgba(0,0,0,0.7)" : "rgba(0,0,0,0.3)",
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: theme.background, borderColor: theme.border },
+            ]}
+          >
             <View
               style={{
                 flexDirection: "row",
@@ -62,14 +77,21 @@ export default function AccountSwitcher({
                 style={{ padding: 4, marginRight: 8, marginBottom: 10 }}
                 hitSlop={8}
               >
-                <Ionicons name="close" size={24} color="#333" />
+                <Ionicons name="close" size={24} color={theme.text} />
               </Pressable>
               <View style={{ flex: 1, alignItems: "center" }}>
-                <Text style={styles.modalTitle}>Switch Account</Text>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>
+                  Switch Account
+                </Text>
               </View>
               <View style={{ width: 32 }} />
             </View>
-            <View style={styles.currentAccountContainer}>
+            <View
+              style={[
+                styles.currentAccountContainer,
+                { backgroundColor: theme.secondary },
+              ]}
+            >
               <View
                 style={[
                   styles.currentAvatar,
@@ -81,21 +103,29 @@ export default function AccountSwitcher({
                 </Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.currentAccountName}>
+                <Text
+                  style={[styles.currentAccountName, { color: theme.text }]}
+                >
                   {currentAccount.name}
                 </Text>
-                <Text style={styles.currentAccountEmail}>
+                <Text
+                  style={[styles.currentAccountEmail, { color: theme.text }]}
+                >
                   {currentAccount.email}
                 </Text>
-                <Text style={styles.currentLabel}>Current account</Text>
+                <Text style={[styles.currentLabel, { color: theme.primary }]}>
+                  Current account
+                </Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.manageAccountBtn}>
-              <Text style={styles.manageAccountText}>
+            <TouchableOpacity
+              style={[styles.manageAccountBtn, { borderColor: theme.text }]}
+            >
+              <Text style={[styles.manageAccountText, { color: theme.text }]}>
                 Manage your Google Account
               </Text>
             </TouchableOpacity>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: theme.border }]} />
             <FlatList
               data={accounts
                 .filter((a) => a.email !== currentAccount.email)
@@ -103,7 +133,10 @@ export default function AccountSwitcher({
               keyExtractor={(item) => item.email}
               renderItem={({ item }) => (
                 <Pressable
-                  style={styles.accountItem}
+                  style={[
+                    styles.accountItem,
+                    { backgroundColor: theme.secondary },
+                  ]}
                   onPress={() => {
                     setCurrentAccount(item);
                     setModalVisible(false);
@@ -120,16 +153,22 @@ export default function AccountSwitcher({
                     </Text>
                   </View>
                   <View>
-                    <Text style={styles.accountName}>{item.name}</Text>
-                    <Text style={styles.accountEmail}>{item.email}</Text>
+                    <Text style={[styles.accountName, { color: theme.text }]}>
+                      {item.name}
+                    </Text>
+                    <Text style={[styles.accountEmail, { color: theme.text }]}>
+                      {item.email}
+                    </Text>
                   </View>
                 </Pressable>
               )}
             />
             <Pressable
-              style={styles.addAccountInline}
+              style={[
+                styles.addAccountInline,
+                { backgroundColor: theme.secondary },
+              ]}
               onPress={() => {
-                // For demo, just add a mock account
                 setAccounts([
                   ...accounts,
                   {
@@ -142,15 +181,20 @@ export default function AccountSwitcher({
               <Ionicons
                 name="person-add-outline"
                 size={22}
-                color="#333"
+                color={theme.text}
                 style={{ marginRight: 12 }}
               />
               <View>
-                <Text style={styles.accountName}>Add another account</Text>
+                <Text style={[styles.accountName, { color: theme.text }]}>
+                  Add another account
+                </Text>
               </View>
             </Pressable>
             <Pressable
-              style={styles.manageAccountsRow}
+              style={[
+                styles.manageAccountsRow,
+                { backgroundColor: theme.secondary },
+              ]}
               onPress={() => {
                 setManageAccountsVisible(true);
                 setModalVisible(false);
@@ -159,58 +203,63 @@ export default function AccountSwitcher({
               <Ionicons
                 name="person-circle-outline"
                 size={22}
-                color="#333"
+                color={theme.text}
                 style={{ marginRight: 12 }}
               />
-              <Text style={styles.accountName}>Manage accounts</Text>
+              <Text style={[styles.accountName, { color: theme.text }]}>
+                Manage accounts
+              </Text>
             </Pressable>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: theme.border }]} />
             <Pressable
-              style={styles.upgradeRow}
+              style={[styles.upgradeRow, { backgroundColor: theme.secondary }]}
               onPress={() => {
                 console.log("Upgrade to Pro pressed");
-                // Add your upgrade logic here
               }}
             >
               <Ionicons
                 name="document-text"
                 size={22}
-                color="#333"
+                color={theme.text}
                 style={{ marginRight: 12 }}
               />
-              <Text style={styles.accountName}>Upgrade to Pro</Text>
+              <Text style={[styles.accountName, { color: theme.text }]}>
+                Upgrade to Pro
+              </Text>
             </Pressable>
             <Pressable
-              style={styles.licenseRow}
+              style={[styles.licenseRow, { backgroundColor: theme.secondary }]}
               onPress={() => {
                 console.log("Show open source licenses pressed");
-                // Add your licenses logic here
               }}
             >
               <Ionicons
                 name="ribbon-outline"
                 size={22}
-                color="#333"
+                color={theme.text}
                 style={{ marginRight: 12 }}
               />
-              <Text style={styles.accountName}>Show open source licenses</Text>
+              <Text style={[styles.accountName, { color: theme.text }]}>
+                Show open source licenses
+              </Text>
             </Pressable>
             <Pressable
-              style={styles.feedbackRow}
+              style={[styles.feedbackRow, { backgroundColor: theme.secondary }]}
               onPress={() => {
                 console.log("Feedback pressed");
-                // Add your feedback logic here
               }}
             >
               <Ionicons
                 name="alert-circle-outline"
                 size={22}
-                color="#333"
+                color={theme.text}
                 style={{ marginRight: 12 }}
               />
-              <Text style={styles.accountName}>Feedback</Text>
+              <Text style={[styles.accountName, { color: theme.text }]}>
+                Feedback
+              </Text>
             </Pressable>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: theme.border }]} />
           </View>
         </View>
       </Modal>

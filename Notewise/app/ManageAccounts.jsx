@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "./theme";
 
 const profileColors = [
   "#FF6B6B",
@@ -37,15 +38,17 @@ export default function ManageAccounts({
   visible,
   setVisible,
 }) {
+  const theme = useTheme();
   if (!visible) return null;
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={theme.mode === "dark" ? "light" : "dark"} />
       <View
         style={[
           styles.container,
           {
+            backgroundColor: theme.background,
             position: "absolute",
             top: 0,
             left: 0,
@@ -56,14 +59,16 @@ export default function ManageAccounts({
         ]}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: theme.border }]}>
           <Pressable
             onPress={() => setVisible(false)}
             style={styles.closeButton}
           >
-            <Ionicons name="close" size={24} color="#333" />
+            <Ionicons name="close" size={24} color={theme.text} />
           </Pressable>
-          <Text style={styles.headerTitle}>Manage accounts</Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>
+            Manage accounts
+          </Text>
           <View style={{ width: 32 }} />
         </View>
 
@@ -77,20 +82,35 @@ export default function ManageAccounts({
                 { backgroundColor: getColor(currentAccount.name) },
               ]}
             >
-              <Text style={styles.avatarText}>
+              <Text
+                style={[
+                  styles.avatarText,
+                  { color: theme.mode === "dark" ? "#181a20" : "#fff" },
+                ]}
+              >
                 {getInitial(currentAccount.name)}
               </Text>
             </View>
             <View style={styles.accountInfo}>
-              <Text style={styles.accountName}>{currentAccount.name}</Text>
-              <Text style={styles.accountEmail}>{currentAccount.email}</Text>
+              <Text style={[styles.accountName, { color: theme.text }]}>
+                {currentAccount.name}
+              </Text>
+              <Text style={[styles.accountEmail, { color: theme.text }]}>
+                {currentAccount.email}
+              </Text>
             </View>
-            <View style={styles.currentBadge}>
-              <Text style={styles.currentBadgeText}>Current</Text>
+            <View
+              style={[styles.currentBadge, { backgroundColor: theme.primary }]}
+            >
+              <Text
+                style={[styles.currentBadgeText, { color: theme.background }]}
+              >
+                Current
+              </Text>
             </View>
           </View>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
           {/* Other Accounts */}
           {accounts
@@ -110,23 +130,36 @@ export default function ManageAccounts({
                       { backgroundColor: getColor(account.name) },
                     ]}
                   >
-                    <Text style={styles.avatarText}>
+                    <Text
+                      style={[
+                        styles.avatarText,
+                        { color: theme.mode === "dark" ? "#181a20" : "#fff" },
+                      ]}
+                    >
                       {getInitial(account.name)}
                     </Text>
                   </View>
                   <View style={styles.accountInfo}>
-                    <Text style={styles.accountName}>{account.name}</Text>
-                    <Text style={styles.accountEmail}>{account.email}</Text>
+                    <Text style={[styles.accountName, { color: theme.text }]}>
+                      {account.name}
+                    </Text>
+                    <Text style={[styles.accountEmail, { color: theme.text }]}>
+                      {account.email}
+                    </Text>
                   </View>
                 </Pressable>
                 {index <
                   accounts.filter((a) => a.email !== currentAccount.email)
                     .length -
-                    1 && <View style={styles.divider} />}
+                    1 && (
+                  <View
+                    style={[styles.divider, { backgroundColor: theme.border }]}
+                  />
+                )}
               </React.Fragment>
             ))}
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
           {/* Add Another Account */}
           <Pressable
@@ -144,10 +177,12 @@ export default function ManageAccounts({
             <Ionicons
               name="person-add-outline"
               size={22}
-              color="#333"
+              color={theme.text}
               style={{ marginRight: 12 }}
             />
-            <Text style={styles.addAccountText}>Add another account</Text>
+            <Text style={[styles.addAccountText, { color: theme.text }]}>
+              Add another account
+            </Text>
           </Pressable>
         </ScrollView>
       </View>

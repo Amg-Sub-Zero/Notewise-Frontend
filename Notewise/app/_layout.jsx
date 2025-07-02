@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import AccountSwitcher from "./AccountSwitcher";
+import { useTheme } from "./theme";
 
 export default function RootLayout() {
   // Mock user data - replace with actual user data later
@@ -36,9 +37,11 @@ export default function RootLayout() {
     return profileColors[Math.abs(hash) % profileColors.length];
   };
 
+  const theme = useTheme();
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f9fa" }}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <StatusBar style={theme.mode === "dark" ? "light" : "dark"} />
       {/* Custom Header Tab */}
       <View
         style={{
@@ -49,16 +52,16 @@ export default function RootLayout() {
           paddingTop: 4,
           paddingBottom: 4,
           minHeight: 44,
-          backgroundColor: "#f8f9fa",
+          backgroundColor: theme.background,
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Ionicons name="document-text" size={35} color="#333" />
+          <Ionicons name="document-text" size={35} color={theme.text} />
           <Text
             style={{
               fontWeight: "700",
               fontSize: 30,
-              color: "#333",
+              color: theme.text,
               marginLeft: 8,
             }}
           >
