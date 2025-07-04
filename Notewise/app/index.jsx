@@ -110,23 +110,52 @@ export default function Index() {
   };
 
   const pickPDF = async () => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: "application/pdf",
-      copyToCacheDirectory: true,
-      multiple: false,
-    });
-    if (result.type === "success") {
-      // Open chat screen with PDF as source
-      setIsModalVisible(false);
-      setTimeout(() => {
-        setSelectedSource({
-          title: result.name,
-          type: "PDF",
-          details: "PDF file",
-          backgroundColor: "#e3f3e9",
-        });
-        setShowChat(true);
-      }, 300);
+    console.log("pickPDF called");
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+        copyToCacheDirectory: true,
+        multiple: false,
+      });
+      console.log("DocumentPicker result:", result);
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        console.log("PDF selected successfully");
+        const pdfFile = result.assets[0];
+
+        // Close modal first
+        setIsModalVisible(false);
+        setIsBackgroundVisible(false);
+        setCurrentScreen("main");
+
+        // Wait a bit for modal to close, then proceed
+        setTimeout(() => {
+          console.log("Starting PDF processing");
+          setShowLoading(true);
+
+          setTimeout(() => {
+            console.log("Creating PDF source");
+            setShowLoading(false);
+            const pdfSource = {
+              title: pdfFile.name,
+              type: "PDF",
+              details: "PDF file",
+              backgroundColor: "#e3f3e9",
+              id: Date.now(),
+              addedDate: "today",
+            };
+            console.log("PDF source created:", pdfSource);
+            setSources((prev) => [pdfSource, ...prev]);
+            setSelectedSource(pdfSource);
+            setShowChat(true);
+            console.log("Chat should be opening now");
+          }, 1200);
+        }, 500);
+      } else {
+        console.log("DocumentPicker cancelled or failed");
+      }
+    } catch (error) {
+      console.error("Error in pickPDF:", error);
     }
   };
 
