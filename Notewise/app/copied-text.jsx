@@ -107,7 +107,7 @@ export default function CopiedTextScreen({ onBack, onAddSource }) {
                 title: text.trim(),
                 type: "Copied Text",
                 details: "",
-                backgroundColor: theme.secondary,
+                backgroundColor: "#e3f3e9",
               });
               setText("");
             }

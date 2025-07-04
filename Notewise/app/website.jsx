@@ -119,7 +119,7 @@ export default function WebsiteScreen({ onBack, onAddSource }) {
                 title: url.trim(),
                 type: "Website",
                 details: "",
-                backgroundColor: theme.secondary,
+                backgroundColor: "#efeaf3",
               });
               setUrl("");
             }

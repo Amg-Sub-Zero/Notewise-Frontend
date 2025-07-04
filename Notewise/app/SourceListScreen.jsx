@@ -77,10 +77,22 @@ export default function SourceListScreen({
       {/* Floating Add Source Button */}
       <View style={styles.addBtnContainer}>
         <TouchableOpacity
-          style={[styles.addBtn, { backgroundColor: theme.primary }]}
+          style={[
+            styles.addBtn,
+            {
+              backgroundColor: theme.mode === "dark" ? "#fff" : "#333",
+            },
+          ]}
           onPress={onAddSource}
         >
-          <Text style={[styles.addBtnText, { color: theme.background }]}>
+          <Text
+            style={[
+              styles.addBtnText,
+              {
+                color: theme.mode === "dark" ? "#000" : "#fff",
+              },
+            ]}
+          >
             + Add Source
           </Text>
         </TouchableOpacity>

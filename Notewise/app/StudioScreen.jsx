@@ -39,10 +39,10 @@ export default function StudioScreen({ source, onBack, onGenerateAudio }) {
           </>
         )}
         <TouchableOpacity
-          style={[styles.generateBtn, { backgroundColor: theme.primary }]}
+          style={[styles.generateBtn, { backgroundColor: "#3f66fb" }]}
           onPress={onGenerateAudio}
         >
-          <Text style={[styles.generateBtnText, { color: theme.background }]}>
+          <Text style={[styles.generateBtnText, { color: "#fff" }]}>
             Generate Audio
           </Text>
         </TouchableOpacity>

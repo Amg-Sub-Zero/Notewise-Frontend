@@ -156,7 +156,7 @@ export default function ChatScreen({
               { borderBottomColor: theme.mode === "dark" ? "#333" : "#eee" },
             ]}
           >
-            <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
+            <TouchableOpacity onPress={onBack} style={styles.backBtn}>
               <Ionicons name="arrow-back" size={24} color={theme.text} />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>
@@ -298,7 +298,7 @@ export default function ChatScreen({
                   <View
                     style={[
                       {
-                        backgroundColor: theme.secondary,
+                        backgroundColor: "#efeaf3",
                         paddingVertical: 10,
                         paddingHorizontal: 16,
                         borderTopLeftRadius: 16,
@@ -320,7 +320,7 @@ export default function ChatScreen({
                         {
                           textAlign: "right",
                           backgroundColor: "transparent",
-                          color: theme.text,
+                          color: theme.mode === "dark" ? "#000" : theme.text,
                         },
                       ]}
                     >
