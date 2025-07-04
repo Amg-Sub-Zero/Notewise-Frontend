@@ -105,7 +105,7 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
         {/* Add Button */}
         <TouchableOpacity
           style={{
-            backgroundColor: theme.primary,
+            backgroundColor: "#3f66fb",
             paddingVertical: 17,
             paddingHorizontal: 20,
             borderRadius: 26,
@@ -120,7 +120,7 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
                 title: url.trim(),
                 type: "YouTube",
                 details: "",
-                backgroundColor: theme.secondary,
+                backgroundColor: "#e3f3e9",
               });
               setUrl("");
             }
@@ -128,7 +128,7 @@ export default function YouTubeScreen({ onBack, onAddSource }) {
         >
           <Text
             style={{
-              color: theme.background,
+              color: "#fff",
               fontSize: 16,
               fontWeight: "bold",
             }}

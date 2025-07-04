@@ -104,7 +104,7 @@ export default function WebsiteScreen({ onBack, onAddSource }) {
         {/* Add Button */}
         <TouchableOpacity
           style={{
-            backgroundColor: theme.primary,
+            backgroundColor: "#3f66fb",
             paddingVertical: 17,
             paddingHorizontal: 20,
             borderRadius: 26,
@@ -127,7 +127,7 @@ export default function WebsiteScreen({ onBack, onAddSource }) {
         >
           <Text
             style={{
-              color: theme.background,
+              color: "#fff",
               fontSize: 16,
               fontWeight: "bold",
             }}
