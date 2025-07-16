@@ -25,6 +25,8 @@ export default function ChatScreen({
   sources = [],
   onSourcePress,
   onAddSource,
+  onRenameSource,
+  onDeleteSource,
 }) {
   const [messages, setMessages] = useState(
     source
@@ -42,6 +44,9 @@ export default function ChatScreen({
   const [activeTab, setActiveTab] = useState("chat");
   const [inputFocused, setInputFocused] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [renameModalVisible, setRenameModalVisible] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const router = useRouter();
   const navigation = useNavigation();
   const theme = useTheme();
@@ -208,6 +213,8 @@ export default function ChatScreen({
                   style={{ padding: 12 }}
                   onPress={() => {
                     setMenuVisible(false); /* handle rename */
+                    setRenameModalVisible(true);
+                    setNewName("");
                   }}
                 >
                   <Text style={{ color: theme.text, fontSize: 16 }}>
@@ -218,6 +225,7 @@ export default function ChatScreen({
                   style={{ padding: 12 }}
                   onPress={() => {
                     setMenuVisible(false); /* handle delete */
+                    setDeleteModalVisible(true);
                   }}
                 >
                   <Text style={{ color: "red", fontSize: 16 }}>
@@ -226,6 +234,193 @@ export default function ChatScreen({
                 </TouchableOpacity>
               </View>
             </Pressable>
+          </Modal>
+          {/* Rename Modal */}
+          <Modal
+            visible={renameModalVisible}
+            transparent
+            animationType="none"
+            onRequestClose={() => setRenameModalVisible(false)}
+          >
+            <KeyboardAvoidingView
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0,0,0,0.2)",
+              }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={60}
+            >
+              <View
+                style={{
+                  width: 300,
+                  backgroundColor: theme.background,
+                  borderRadius: 16,
+                  padding: 20,
+                  alignItems: "center",
+                  elevation: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    marginBottom: 16,
+                    color: theme.text,
+                  }}
+                >
+                  Edit Name
+                </Text>
+                <TextInput
+                  value={newName}
+                  onChangeText={setNewName}
+                  placeholder="Enter new name"
+                  style={{
+                    width: "100%",
+                    borderWidth: 1,
+                    borderColor: theme.primary,
+                    borderRadius: 8,
+                    padding: 10,
+                    marginBottom: 20,
+                    color: theme.text,
+                  }}
+                  placeholderTextColor={theme.text}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      padding: 10,
+                      alignItems: "center",
+                      borderRadius: 8,
+                      backgroundColor:
+                        theme.mode === "dark" ? theme.background : "#eee",
+                      marginRight: 8,
+                      borderWidth: 1,
+                      borderColor: theme.mode === "dark" ? "#fff" : "#3f66fb",
+                    }}
+                    onPress={() => setRenameModalVisible(false)}
+                  >
+                    <Text style={{ color: theme.text }}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      padding: 10,
+                      alignItems: "center",
+                      borderRadius: 8,
+                      backgroundColor: theme.primary,
+                      marginLeft: 8,
+                    }}
+                    onPress={() => {
+                      if (newName.trim()) {
+                        onRenameSource(source.id, newName.trim());
+                        setRenameModalVisible(false);
+                      }
+                    }}
+                  >
+                    <Text style={{ color: "#fff" }}>Rename</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </Modal>
+          {/* Delete Modal */}
+          <Modal
+            visible={deleteModalVisible}
+            transparent
+            animationType="none"
+            onRequestClose={() => setDeleteModalVisible(false)}
+          >
+            <KeyboardAvoidingView
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0,0,0,0.2)",
+              }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={60}
+            >
+              <View
+                style={{
+                  width: 300,
+                  backgroundColor: theme.background,
+                  borderRadius: 16,
+                  padding: 20,
+                  alignItems: "center",
+                  elevation: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    marginBottom: 16,
+                    color: theme.text,
+                  }}
+                >
+                  Delete Notebook
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: theme.text,
+                    marginBottom: 24,
+                    textAlign: "center",
+                  }}
+                >
+                  Remove this notebook and its all contents
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      padding: 10,
+                      alignItems: "center",
+                      borderRadius: 8,
+                      backgroundColor:
+                        theme.mode === "dark" ? theme.background : "#eee",
+                      marginRight: 8,
+                      borderWidth: 1,
+                      borderColor: theme.mode === "dark" ? "#fff" : "#3f66fb",
+                    }}
+                    onPress={() => setDeleteModalVisible(false)}
+                  >
+                    <Text style={{ color: theme.text }}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      padding: 10,
+                      alignItems: "center",
+                      borderRadius: 8,
+                      backgroundColor: theme.primary,
+                      marginLeft: 8,
+                    }}
+                    onPress={() => {
+                      onDeleteSource(source.id);
+                      setDeleteModalVisible(false);
+                    }}
+                  >
+                    <Text style={{ color: "#fff" }}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </KeyboardAvoidingView>
           </Modal>
 
           {/* Chat Messages */}

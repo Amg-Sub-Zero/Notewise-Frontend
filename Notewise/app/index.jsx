@@ -182,6 +182,27 @@ export default function Index() {
     }, 1200);
   };
 
+  // Rename source by id
+  const handleRenameSource = (id, newTitle) => {
+    setSources((prevSources) =>
+      prevSources.map((src) =>
+        src.id === id ? { ...src, title: newTitle } : src
+      )
+    );
+    if (selectedSource && selectedSource.id === id) {
+      setSelectedSource((prev) => ({ ...prev, title: newTitle }));
+    }
+  };
+
+  // Delete source by id
+  const handleDeleteSource = (id) => {
+    setSources((prevSources) => prevSources.filter((src) => src.id !== id));
+    if (selectedSource && selectedSource.id === id) {
+      setSelectedSource(null);
+      setShowChat(false);
+    }
+  };
+
   const TabButton = ({ title, isActive, onPress }) => (
     <TouchableOpacity
       onPress={onPress}
@@ -270,6 +291,8 @@ export default function Index() {
             <ChatScreen
               source={selectedSource}
               onBack={() => setShowChat(false)}
+              onRenameSource={handleRenameSource}
+              onDeleteSource={handleDeleteSource}
             />
           </Animated.View>
         )}
