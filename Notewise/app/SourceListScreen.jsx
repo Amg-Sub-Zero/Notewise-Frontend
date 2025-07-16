@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Modal,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "./theme";
@@ -17,6 +19,7 @@ export default function SourceListScreen({
   title,
 }) {
   const theme = useTheme();
+  const [menuVisible, setMenuVisible] = React.useState(false);
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       {/* Header */}
@@ -24,13 +27,70 @@ export default function SourceListScreen({
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={[styles.headerTitle, { color: theme.text }]}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text
+            style={[styles.headerTitle, { color: theme.text }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {title || (sources && sources[0]?.title) || "Source"}
           </Text>
         </View>
-        <View style={{ width: 24 }} />
+        <TouchableOpacity
+          onPress={() => setMenuVisible(true)}
+          style={{ padding: 4 }}
+        >
+          <Ionicons name="ellipsis-vertical" size={20} color={theme.text} />
+        </TouchableOpacity>
       </View>
+      {/* Menu Modal */}
+      <Modal
+        visible={menuVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <Pressable style={{ flex: 1 }} onPress={() => setMenuVisible(false)}>
+          <View
+            style={{
+              position: "absolute",
+              top: 60,
+              right: 20,
+              backgroundColor: theme.background,
+              borderRadius: 8,
+              elevation: 5,
+              shadowColor: "#000",
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              paddingVertical: 8,
+              minWidth: 160,
+            }}
+          >
+            <TouchableOpacity
+              style={{ padding: 12 }}
+              onPress={() => {
+                setMenuVisible(false); /* handle rename */
+              }}
+            >
+              <Text style={{ color: theme.text, fontSize: 16 }}>
+                Rename Notebook
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ padding: 12 }}
+              onPress={() => {
+                setMenuVisible(false); /* handle delete */
+              }}
+            >
+              <Text style={{ color: "red", fontSize: 16 }}>
+                Delete Notebook
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
       <ScrollView style={{ flex: 1, padding: 16 }}>
         <View style={{ flex: 1, alignItems: "center", paddingTop: 0 }}>
           <View style={{ width: "100%", marginBottom: 20 }}>
@@ -115,12 +175,12 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 13,
+    fontWeight: "normal",
   },
   addBtnContainer: {
     position: "absolute",
-    bottom: 55,
+    bottom: 15,
     left: 0,
     right: 0,
     alignItems: "center",

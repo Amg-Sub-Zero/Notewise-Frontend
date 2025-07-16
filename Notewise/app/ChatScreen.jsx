@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Clipboard,
+  Modal,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import BottomTabBar from "./BottomTabBar";
@@ -39,6 +41,7 @@ export default function ChatScreen({
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("chat");
   const [inputFocused, setInputFocused] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const router = useRouter();
   const navigation = useNavigation();
   const theme = useTheme();
@@ -160,22 +163,70 @@ export default function ChatScreen({
               <Ionicons name="arrow-back" size={24} color={theme.text} />
             </TouchableOpacity>
             <View style={{ flex: 1, alignItems: "center" }}>
-              <Text style={[styles.headerTitle, { color: theme.text }]}>
+              <Text
+                style={[styles.headerTitle, { color: theme.text }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {source?.title || "Source"}
               </Text>
-              {source?.type && (
-                <Text
-                  style={[
-                    styles.headerType,
-                    { color: theme.text, opacity: 0.7 },
-                  ]}
-                >
-                  {source.type}
-                </Text>
-              )}
             </View>
-            <View style={{ width: 24 }} />
+            <TouchableOpacity
+              onPress={() => setMenuVisible(true)}
+              style={{ padding: 4 }}
+            >
+              <Ionicons name="ellipsis-vertical" size={20} color={theme.text} />
+            </TouchableOpacity>
           </View>
+          {/* Menu Modal */}
+          <Modal
+            visible={menuVisible}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setMenuVisible(false)}
+          >
+            <Pressable
+              style={{ flex: 1 }}
+              onPress={() => setMenuVisible(false)}
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  top: 60,
+                  right: 20,
+                  backgroundColor: theme.background,
+                  borderRadius: 8,
+                  elevation: 5,
+                  shadowColor: "#000",
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  paddingVertical: 8,
+                  minWidth: 160,
+                }}
+              >
+                <TouchableOpacity
+                  style={{ padding: 12 }}
+                  onPress={() => {
+                    setMenuVisible(false); /* handle rename */
+                  }}
+                >
+                  <Text style={{ color: theme.text, fontSize: 16 }}>
+                    Rename Notebook
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ padding: 12 }}
+                  onPress={() => {
+                    setMenuVisible(false); /* handle delete */
+                  }}
+                >
+                  <Text style={{ color: "red", fontSize: 16 }}>
+                    Delete Notebook
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Modal>
 
           {/* Chat Messages */}
           <FlatList
@@ -427,8 +478,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 13,
+    fontWeight: "normal",
     color: "#333",
   },
   headerType: {

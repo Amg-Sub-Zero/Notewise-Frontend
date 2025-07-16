@@ -1,10 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "./theme";
 
 export default function StudioScreen({ source, onBack, onGenerateAudio }) {
   const theme = useTheme();
+  const [menuVisible, setMenuVisible] = React.useState(false);
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
@@ -12,18 +20,70 @@ export default function StudioScreen({ source, onBack, onGenerateAudio }) {
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={[styles.headerTitle, { color: theme.text }]}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text
+            style={[styles.headerTitle, { color: theme.text }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {source?.title || "Studio"}
           </Text>
-          {source?.type && (
-            <Text style={[styles.headerType, { color: theme.text }]}>
-              {source.type}
-            </Text>
-          )}
         </View>
-        <View style={{ width: 24 }} />
+        <TouchableOpacity
+          onPress={() => setMenuVisible(true)}
+          style={{ padding: 4 }}
+        >
+          <Ionicons name="ellipsis-vertical" size={20} color={theme.text} />
+        </TouchableOpacity>
       </View>
+      {/* Menu Modal */}
+      <Modal
+        visible={menuVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <Pressable style={{ flex: 1 }} onPress={() => setMenuVisible(false)}>
+          <View
+            style={{
+              position: "absolute",
+              top: 60,
+              right: 20,
+              backgroundColor: theme.background,
+              borderRadius: 8,
+              elevation: 5,
+              shadowColor: "#000",
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              paddingVertical: 8,
+              minWidth: 160,
+            }}
+          >
+            <TouchableOpacity
+              style={{ padding: 12 }}
+              onPress={() => {
+                setMenuVisible(false); /* handle rename */
+              }}
+            >
+              <Text style={{ color: theme.text, fontSize: 16 }}>
+                Rename Notebook
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ padding: 12 }}
+              onPress={() => {
+                setMenuVisible(false); /* handle delete */
+              }}
+            >
+              <Text style={{ color: "red", fontSize: 16 }}>
+                Delete Notebook
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
 
       {/* Centered Title and Generate Audio Button */}
       <View style={styles.centerArea}>
@@ -161,8 +221,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 13,
+    fontWeight: "normal",
   },
   headerType: {
     fontSize: 13,

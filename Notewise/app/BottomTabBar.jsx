@@ -12,115 +12,133 @@ import { useTheme } from "./theme";
 export default function BottomTabBar({ activeTab = "chat", onTabPress }) {
   const theme = useTheme();
   return (
-    <View
-      style={[
-        styles.tabBar,
-        { backgroundColor: theme.tabBar, borderTopColor: theme.tabBarBorder },
-      ]}
-    >
-      <TouchableOpacity
-        style={styles.tabItem}
-        onPress={() => onTabPress?.("source")}
+    <View style={{ position: "relative" }}>
+      {/* Background covering from bottom to the tab bar */}
+      <View
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          top: 0,
+          backgroundColor: theme.tabBar,
+          zIndex: 0,
+        }}
+      />
+      <View
+        style={[
+          styles.tabBar,
+          {
+            backgroundColor: theme.tabBar,
+            borderTopColor: theme.tabBarBorder,
+            zIndex: 1,
+          },
+        ]}
       >
-        <Ionicons
-          name={activeTab === "source" ? "folder" : "folder-outline"}
-          size={28}
-          color={
-            activeTab === "source"
-              ? theme.mode === "dark"
-                ? "#fff"
-                : "#333"
-              : theme.mode === "dark"
-              ? "#666"
-              : "#333"
-          }
-        />
-        <Text
-          style={[
-            styles.tabLabel,
-            {
-              color:
-                theme.mode === "dark"
-                  ? "#fff"
-                  : activeTab === "source"
-                  ? "#333"
-                  : "#333",
-            },
-          ]}
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => onTabPress?.("source")}
         >
-          Source
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.tabItem}
-        onPress={() => onTabPress?.("chat")}
-      >
-        <Ionicons
-          name={
-            activeTab === "chat"
-              ? "chatbubble-ellipses"
-              : "chatbubble-ellipses-outline"
-          }
-          size={34}
-          color={
-            activeTab === "chat"
-              ? theme.mode === "dark"
-                ? "#fff"
-                : "#333"
-              : theme.mode === "dark"
-              ? "#666"
-              : "#333"
-          }
-        />
-        <Text
-          style={[
-            styles.tabLabel,
-            {
-              color:
-                theme.mode === "dark"
+          <Ionicons
+            name={activeTab === "source" ? "folder" : "folder-outline"}
+            size={24}
+            color={
+              activeTab === "source"
+                ? theme.mode === "dark"
                   ? "#fff"
-                  : activeTab === "chat"
-                  ? "#333"
-                  : "#333",
-            },
-          ]}
-        >
-          Chat
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.tabItem}
-        onPress={() => onTabPress?.("studio")}
-      >
-        <Ionicons
-          name={activeTab === "studio" ? "easel" : "easel-outline"}
-          size={28}
-          color={
-            activeTab === "studio"
-              ? theme.mode === "dark"
-                ? "#fff"
+                  : "#333"
+                : theme.mode === "dark"
+                ? "#666"
                 : "#333"
-              : theme.mode === "dark"
-              ? "#666"
-              : "#333"
-          }
-        />
-        <Text
-          style={[
-            styles.tabLabel,
-            {
-              color:
-                theme.mode === "dark"
-                  ? "#fff"
-                  : activeTab === "studio"
-                  ? "#333"
-                  : "#333",
-            },
-          ]}
+            }
+          />
+          <Text
+            style={[
+              styles.tabLabel,
+              {
+                color:
+                  theme.mode === "dark"
+                    ? "#fff"
+                    : activeTab === "source"
+                    ? "#333"
+                    : "#333",
+              },
+            ]}
+          >
+            Source
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => onTabPress?.("chat")}
         >
-          Studio
-        </Text>
-      </TouchableOpacity>
+          <Ionicons
+            name={
+              activeTab === "chat"
+                ? "chatbubble-ellipses"
+                : "chatbubble-ellipses-outline"
+            }
+            size={24}
+            color={
+              activeTab === "chat"
+                ? theme.mode === "dark"
+                  ? "#fff"
+                  : "#333"
+                : theme.mode === "dark"
+                ? "#666"
+                : "#333"
+            }
+          />
+          <Text
+            style={[
+              styles.tabLabel,
+              {
+                color:
+                  theme.mode === "dark"
+                    ? "#fff"
+                    : activeTab === "chat"
+                    ? "#333"
+                    : "#333",
+              },
+            ]}
+          >
+            Chat
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => onTabPress?.("studio")}
+        >
+          <Ionicons
+            name={activeTab === "studio" ? "easel" : "easel-outline"}
+            size={20}
+            color={
+              activeTab === "studio"
+                ? theme.mode === "dark"
+                  ? "#fff"
+                  : "#333"
+                : theme.mode === "dark"
+                ? "#666"
+                : "#333"
+            }
+          />
+          <Text
+            style={[
+              styles.tabLabel,
+              {
+                color:
+                  theme.mode === "dark"
+                    ? "#fff"
+                    : activeTab === "studio"
+                    ? "#333"
+                    : "#333",
+              },
+            ]}
+          >
+            Studio
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -132,7 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 30,
     paddingTop: 8,
-    paddingBottom: Platform.OS === "ios" ? 24 : 12,
+    paddingBottom: Platform.OS === "ios" ? 14 : 8,
     borderTopWidth: 1,
     marginBottom: 50,
     gap: 50,
