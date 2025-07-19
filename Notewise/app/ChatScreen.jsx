@@ -148,6 +148,8 @@ export default function ChatScreen({
           onAddSource={onAddSource}
           onBack={onBack}
           title={source?.title}
+          onRenameSource={onRenameSource}
+          onDeleteSource={onDeleteSource}
         />
       ) : activeTab === "studio" ? (
         <StudioScreen

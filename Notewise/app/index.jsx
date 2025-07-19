@@ -293,6 +293,12 @@ export default function Index() {
               onBack={() => setShowChat(false)}
               onRenameSource={handleRenameSource}
               onDeleteSource={handleDeleteSource}
+              onAddSource={handleAddSource}
+              sources={sources}
+              onSourcePress={(source) => {
+                setSelectedSource(source);
+                setShowChat(true);
+              }}
             />
           </Animated.View>
         )}
