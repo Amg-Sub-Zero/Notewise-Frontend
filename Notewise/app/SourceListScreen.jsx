@@ -485,7 +485,7 @@ export default function SourceListScreen({
               },
             ]}
           >
-            + Add Sourcer
+            + Add Source
           </Text>
         </TouchableOpacity>
       </View>
